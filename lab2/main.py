@@ -1,10 +1,8 @@
 import sys, getopt, hashlib
-from math import exp, expm1
 import argparse
-from utils import key_256, subkeygen, scramble, xor
+from utils import key_256, scramble, xor
 ROUNDS = 4
-BLOCKSIZE = 8
-BLOCKSIZE_BITS = 64
+BLOCKSIZE = 4*2
 
 
 def main(args=None):
@@ -37,7 +35,7 @@ def main(args=None):
 
 def encryptMessage(key, message):
     ciphertext = ""
-    n = BLOCKSIZE  # 8 bytes (64 bits) per block
+    n = BLOCKSIZE  
 
     # Split mesage into 64bit blocks
     message = [message[i : i + n] for i in range(0, len(message), n)]
@@ -55,7 +53,7 @@ def encryptMessage(key, message):
         R[0] = block[int(BLOCKSIZE / 2) :]
         for i in range(1, ROUNDS + 1):
             L[i] = R[i - 1]
-            R[i] = xor(L[i - 1], scramble(R[i - 1], i, key))
+            R[i] = xor(L[i - 1], scramble(R[i - 1], key))
 
         ciphertext += L[ROUNDS] + R[ROUNDS]
 
@@ -82,7 +80,7 @@ def decryptCipher(key, ciphertext):
         R[ROUNDS] = block[int(BLOCKSIZE / 2) :]
         for i in range(ROUNDS, 0, -1):
             R[i - 1] = L[i]
-            L[i - 1] = xor(R[i], scramble(L[i], i, key))
+            L[i - 1] = xor(R[i], scramble(L[i], key))
 
         message += L[0] + R[0]
 

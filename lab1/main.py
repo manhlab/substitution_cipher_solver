@@ -1,12 +1,12 @@
 import json
 import string
-from encrypt import encrypt
+from encrypt import encrypt, analys
 from decrypt import decrypt
 import random
 import string
 
 def new_book():
-    debug = False
+    debug = True
     alpha = "abcdefghijklmnopqrstuvwxyz"  
     key = list(alpha)
     if debug:
@@ -39,6 +39,7 @@ if __name__ == "__main__":
     print("Press 1: Setup new book")
     print("Press 2: Encrypt new text")
     print("Press 3: Decrypt cryptotext")
+    print("Press 4: Cryptoanalys")
     print("-"*25)
     while True:
         option = int(input("Enter your option: "))
@@ -50,6 +51,9 @@ if __name__ == "__main__":
             break
         elif option==3:
             decrypt()
+            break
+        elif option==4:
+            analys()
             break
         else:
             print("Operattor now permited!")

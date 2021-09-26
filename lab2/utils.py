@@ -1,26 +1,26 @@
 
+import numpy
 import hashlib
+import math
+from fraction import Fraction
+
 SECRET = "thisissecret"
-
+PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679
 def key_256(key):
-    return hashlib.sha256((key + SECRET).encode("utf-8")).hexdigest()
+    return hashlib.sha256((key + SECRET).encode("utf-8")).hexdigest()[:4]
 
-
-def subkeygen(s1, s2, i):
-    # print ("GENERATING KEY #" + str(i))
-    # print ("S1: " + s1)
-    # print ("S2: " + s2)
-    result = hashlib.sha256((s1 + s2).encode("utf-8")).hexdigest()
-    # print ("RESULT: " + result)
-    return result
-
-
-def scramble(x, i, k):
-    k = stobin(k)
-    x = stobin(str(x))
+def scramble(x, k):
+    k = stobin(k)    
+    x = stobin(x)
     k = bintoint(k)
     x = bintoint(x)
-    res = pow((x * k), i)
+    x = numpy.float128(x)    
+    x = x*(x % (2*PI))
+    res = (numpy.power(2, 64, dtype= numpy.float128)-1)*\
+        abs(abs(numpy.cos(x, dtype=numpy.float128)) + \
+            numpy.power(5, -abs(k), dtype= numpy.float128) -1)
+    res = int(res) 
+       
     res = itobin(res)
     return bintostr(res)
 
@@ -47,4 +47,4 @@ def itobin(i):
 
 # binary to string
 def bintostr(b):
-    return "".join(chr(int(b[i : i + 8], 2)) for i in range(0, len(b), 8))
+    return "".join(chr(int(b[i: i + 8], 2)) for i in range(0, len(b), 8))
